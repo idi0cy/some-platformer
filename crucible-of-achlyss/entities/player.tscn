@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://cv8qxjq2xxfjy"]
+
+[ext_resource type="Texture2D" uid="uid://dfpkdqohq6evn" path="res://icon.svg" id="1_merdl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_merdl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_b0kkn"]
+size = Vector2(32, 32)
+
+[node name="Player" type="Node2D" unique_id=912380446]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1078902213]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_merdl")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=287432543]
+
+[node name="hurtbox" type="Area2D" parent="." unique_id=809847635]
+visible = false
+
+[node name="hurtboxShape" type="CollisionShape2D" parent="hurtbox" unique_id=1824933662]
+shape = SubResource("RectangleShape2D_merdl")
+
+[node name="hitbox" type="Area2D" parent="." unique_id=1095984882]
+
+[node name="hitboxShape" type="CollisionShape2D" parent="hitbox" unique_id=1334105094]
+shape = SubResource("RectangleShape2D_b0kkn")
