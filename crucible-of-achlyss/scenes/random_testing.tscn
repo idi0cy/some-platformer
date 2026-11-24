@@ -6,7 +6,7 @@
 [node name="testingEnv" type="Node2D" unique_id=1161666507]
 
 [node name="Player" parent="." unique_id=912380446 instance=ExtResource("1_4ckl3")]
-position = Vector2(577, 321)
+position = Vector2(583, 327)
 
 [node name="Platform" parent="." unique_id=304735604 instance=ExtResource("2_1xtuw")]
 position = Vector2(526, 604)
