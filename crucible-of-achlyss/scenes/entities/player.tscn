@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://cv8qxjq2xxfjy"]
 
+[ext_resource type="Script" uid="uid://clqwrhmobkm1v" path="res://scripts/entities/player.gd" id="1_b0kkn"]
 [ext_resource type="Texture2D" uid="uid://dfpkdqohq6evn" path="res://icon.svg" id="1_merdl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_merdl"]
@@ -7,7 +8,11 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_b0kkn"]
 size = Vector2(32, 32)
 
-[node name="Player" type="Node2D" unique_id=912380446]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e4p34"]
+size = Vector2(32, 32)
+
+[node name="Player" type="CharacterBody2D" unique_id=1801331678]
+script = ExtResource("1_b0kkn")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1078902213]
 scale = Vector2(0.25, 0.25)
@@ -22,6 +27,10 @@ visible = false
 shape = SubResource("RectangleShape2D_merdl")
 
 [node name="hitbox" type="Area2D" parent="." unique_id=1095984882]
+visible = false
 
 [node name="hitboxShape" type="CollisionShape2D" parent="hitbox" unique_id=1334105094]
 shape = SubResource("RectangleShape2D_b0kkn")
+
+[node name="collisionShape" type="CollisionShape2D" parent="." unique_id=1189958589]
+shape = SubResource("RectangleShape2D_e4p34")
