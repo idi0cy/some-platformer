@@ -3,32 +3,29 @@ extends CharacterBody2D
 const UP = Vector2(0, -1)
 const speed = 500
 
-var collisionDown = true
-var collisionUp = true
-var collisionLeft = true
-var collisionRight = true
+var doubleJumps = 1
 
-var momentumX : float
-var momentumY : float
-
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	momentumX = 0
-	momentumY = 0
+	pass
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if !(is_on_floor()):
 		velocity += get_gravity() * delta
 	else:
-		if Input.is_action_just_pressed('space'):
-			print('something')
+		doubleJumps = 1
+	
+	#region | Handling jumps
+	if (Input.is_action_just_pressed('space')):
+		if (is_on_floor()):
+			velocity.y -= 500
+		elif (doubleJumps > 0):
+			doubleJumps -= 1
+			velocity.y = 0
 			velocity.y -= 500
 	
-	if Input.is_action_pressed('a'):
-		print('pressing down a')
-	if Input.is_action_pressed("d"):
-		print('pressing down d')
+	#endregion
+	
+	var directionX = Input.get_axis('a', 'd')
+	velocity.x = directionX * speed
 	
 	move_and_slide()
