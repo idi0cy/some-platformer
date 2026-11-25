@@ -45,11 +45,15 @@ shape = SubResource("RectangleShape2D_e4p34")
 shape = SubResource("RectangleShape2D_08t41")
 
 [node name="coyoteFrames" type="Timer" parent="." unique_id=19113870]
-wait_time = 0.25
+wait_time = 0.15
 one_shot = true
 
 [node name="inputBuffer" type="Timer" parent="." unique_id=1691522915]
-wait_time = 0.25
+wait_time = 0.1
+one_shot = true
+
+[node name="slideBuffer" type="Timer" parent="." unique_id=2049270072]
+wait_time = 0.15
 one_shot = true
 
 [connection signal="body_entered" from="outerDetection" to="." method="_on_outer_detection_body_entered"]

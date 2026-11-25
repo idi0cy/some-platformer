@@ -7,10 +7,14 @@ extends CharacterBody2D
 
 @onready var coyoteTimer = get_node('coyoteFrames')
 @onready var inputBuffer = get_node('inputBuffer')
+@onready var slideBuffer = get_node('slideBuffer')
 
 const UP = Vector2(0, -1)
 const speed = 300
-const dashSpeed = 2000
+const jumpPower = 400
+const dashSpeed = 1750 + speed
+
+const slideThresh = 500
 
 var dashing = false
 var availableDashes = 1
@@ -42,6 +46,7 @@ func _process(delta: float) -> void:
 		var dashDirection = Input.get_vector("a", "d", "w", "s")
 		
 		if dashDirection != Vector2(0,0):
+			
 			availableDashes -= 1
 			
 			var oldVelocity = velocity
@@ -64,29 +69,14 @@ func _process(delta: float) -> void:
 	
 	#region | Wall jumping and all that
 	
-	if (is_on_wall() && Input.is_action_just_pressed("space")):
-		print(200 * get_wall_normal()[0])
-		velocity.x += 200 * get_wall_normal()[0]
-		velocity.y += 150
-	
-	
 	if (is_on_wall() && velocity.y > 0):
 		if velocity.y > 150:
 			velocity.y = 150
 	
 	#endregion
 	
-	#region | Sliding code
-	
-	if is_on_floor() && !dashing && Input.is_action_pressed('s'):
-		if abs(velocity.x) < abs(velocity.y):
-			print(abs(velocity.y))
-		else:
-			print(abs(velocity.y))
-	
-	#endregion
-	
 	handleJumps()
+	handleSlides()
 	
 	move_and_slide()
 
@@ -101,10 +91,16 @@ func handleJumps():
 		jump()
 		coyoteTimer.stop()
 		inputBuffer.stop()
-
 func jump():
-	velocity.y -= 500
+	velocity.y -= jumpPower
 
+func handleSlides():
+	if Input.is_action_pressed("s") && !sliding && is_on_floor() && abs(velocity.x) > speed && !dashing:
+		sliding = true
+		print("i've begun the sliding")
+	if not (Input.is_action_pressed("s") && is_on_floor()) && sliding:
+		sliding = false
+		print('OH NOOOOOOOOOOOOOOOOOOOO')
 
 func _on_outer_detection_body_entered(body: Node2D) -> void:
 	
