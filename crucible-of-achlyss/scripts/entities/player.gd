@@ -108,15 +108,3 @@ func handleSlides():
 		scale = scale.lerp(Vector2(1, 0.66), 0.2)
 	else:
 		scale = scale.lerp(Vector2(1, 1), 0.2)
-	
-
-func _on_outer_detection_body_entered(body: Node2D) -> void:
-	
-	if body is StaticBody2D:
-		if  body.global_position.y - ((body.get_children()[0].shape.extents * body.scale)[1]) > global_position.y:
-			coyoteDown = true
-
-func _on_outer_detection_body_exited(body: Node2D) -> void:
-	if body is StaticBody2D:
-		if  body.global_position.y - ((body.get_children()[0].shape.extents * body.scale)[1]) > global_position.y:
-			coyoteDown = false

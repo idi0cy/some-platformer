@@ -55,6 +55,3 @@ one_shot = true
 [node name="slideBuffer" type="Timer" parent="." unique_id=2049270072]
 wait_time = 0.15
 one_shot = true
-
-[connection signal="body_entered" from="outerDetection" to="." method="_on_outer_detection_body_entered"]
-[connection signal="body_exited" from="outerDetection" to="." method="_on_outer_detection_body_exited"]
