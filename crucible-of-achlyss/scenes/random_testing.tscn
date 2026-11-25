@@ -10,7 +10,7 @@ position = Vector2(583, 327)
 
 [node name="Platform" parent="." unique_id=304735604 instance=ExtResource("2_1xtuw")]
 position = Vector2(526, 604)
-scale = Vector2(73.879524, -6.2951374)
+scale = Vector2(73.879524, 6.42486)
 
 [node name="Platform2" parent="." unique_id=1158560200 instance=ExtResource("2_1xtuw")]
 position = Vector2(584, 523)
@@ -18,12 +18,12 @@ scale = Vector2(3.16, 3.16)
 
 [node name="Platform3" parent="." unique_id=1167060760 instance=ExtResource("2_1xtuw")]
 position = Vector2(791, 330)
-scale = Vector2(6.1689987, -2.1115794)
+scale = Vector2(8.110894, 3.0253067)
 
 [node name="Platform4" parent="." unique_id=323399622 instance=ExtResource("2_1xtuw")]
 position = Vector2(217, 179)
-scale = Vector2(0.8985673, -6.902137)
+scale = Vector2(0.8985673, 6.657856)
 
 [node name="Platform5" parent="." unique_id=1415207772 instance=ExtResource("2_1xtuw")]
 position = Vector2(378, 393)
-scale = Vector2(3.3374271, -15.0355625)
+scale = Vector2(3.3374271, 10.804436)

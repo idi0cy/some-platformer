@@ -14,6 +14,10 @@ var availableDashes = 1
 
 var sliding = false
 
+var coyoteDown = false
+var coyoteLeft = false
+var coyoteRight = false
+
 #endregion
 
 func _ready() -> void:
@@ -74,16 +78,23 @@ func _process(delta: float) -> void:
 	
 	#region | Sliding code
 	
-	if is_on_floor() && !dashing && Input.is_action_pressed('s'):
+	if coyoteDown && !dashing && Input.is_action_pressed('s'):
 		if abs(velocity.x) < abs(velocity.y):
-			print('more vertical velocity')
+			print(abs(velocity.y))
 		else:
-			print('less vertical velocity')
+			print(abs(velocity.y))
 	
 	#endregion
 	
 	move_and_slide()
 
 func _on_outer_detection_body_entered(body: Node2D) -> void:
-	if body != hitbox && body != hurtbox && body != self:
-		print(body)
+	
+	if body is StaticBody2D:
+		if  body.global_position.y - ((body.get_children()[0].shape.extents * body.scale)[1]) > global_position.y:
+			coyoteDown = true
+
+func _on_outer_detection_body_exited(body: Node2D) -> void:
+	if body is StaticBody2D:
+		if  body.global_position.y - ((body.get_children()[0].shape.extents * body.scale)[1]) > global_position.y:
+			coyoteDown = false

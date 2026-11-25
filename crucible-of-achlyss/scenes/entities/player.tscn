@@ -12,7 +12,7 @@ size = Vector2(32, 32)
 size = Vector2(32, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_08t41"]
-size = Vector2(36, 36)
+size = Vector2(40, 40)
 
 [node name="Player" type="CharacterBody2D" unique_id=1801331678]
 script = ExtResource("1_b0kkn")
@@ -45,3 +45,4 @@ shape = SubResource("RectangleShape2D_e4p34")
 shape = SubResource("RectangleShape2D_08t41")
 
 [connection signal="body_entered" from="outerDetection" to="." method="_on_outer_detection_body_entered"]
+[connection signal="body_exited" from="outerDetection" to="." method="_on_outer_detection_body_exited"]
