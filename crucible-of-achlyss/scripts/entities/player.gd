@@ -10,9 +10,11 @@ extends CharacterBody2D
 @onready var slideBuffer = get_node('slideBuffer')
 
 const UP = Vector2(0, -1)
-const speed = 300
+const speed = 5
 const jumpPower = 400
 const dashSpeed = 1750 + speed
+
+var leftRightWeight = 0
 
 const slideThresh = 500
 
@@ -49,13 +51,15 @@ func _process(delta: float) -> void:
 	
 	handleDashes()
 	
+	print(velocity.x)
+	
 	move_and_slide()
 
 func handleLeftToRight():
 	if !dashing:
 		var directionX = Input.get_axis('a', 'd')
-		velocity.x = directionX * speed
-	pass
+		leftRightWeight = directionX * speed
+		position.x += leftRightWeight
 
 func handleJumps():
 	if is_on_floor():
