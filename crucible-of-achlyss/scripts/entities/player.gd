@@ -1,12 +1,19 @@
 extends CharacterBody2D
 
 #region | Setting up initial variables
+
+@onready var hitbox = get_node('hitbox')
+@onready var hurtbox = get_node('hurtbox')
+
 const UP = Vector2(0, -1)
 const speed = 300
 const dashSpeed = 2000
 
 var dashing = false
 var availableDashes = 1
+
+var sliding = false
+
 #endregion
 
 func _ready() -> void:
@@ -65,4 +72,18 @@ func _process(delta: float) -> void:
 	
 	#endregion
 	
+	#region | Sliding code
+	
+	if is_on_floor() && !dashing && Input.is_action_pressed('s'):
+		if abs(velocity.x) < abs(velocity.y):
+			print('more vertical velocity')
+		else:
+			print('less vertical velocity')
+	
+	#endregion
+	
 	move_and_slide()
+
+func _on_outer_detection_body_entered(body: Node2D) -> void:
+	if body != hitbox && body != hurtbox && body != self:
+		print(body)

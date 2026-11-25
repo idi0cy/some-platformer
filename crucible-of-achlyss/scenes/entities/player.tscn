@@ -11,6 +11,9 @@ size = Vector2(32, 32)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_e4p34"]
 size = Vector2(32, 32)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_08t41"]
+size = Vector2(36, 36)
+
 [node name="Player" type="CharacterBody2D" unique_id=1801331678]
 script = ExtResource("1_b0kkn")
 
@@ -33,4 +36,12 @@ visible = false
 shape = SubResource("RectangleShape2D_b0kkn")
 
 [node name="collisionShape" type="CollisionShape2D" parent="." unique_id=1189958589]
+visible = false
 shape = SubResource("RectangleShape2D_e4p34")
+
+[node name="outerDetection" type="Area2D" parent="." unique_id=493770484]
+
+[node name="outerCollision" type="CollisionShape2D" parent="outerDetection" unique_id=462287520]
+shape = SubResource("RectangleShape2D_08t41")
+
+[connection signal="body_entered" from="outerDetection" to="." method="_on_outer_detection_body_entered"]
