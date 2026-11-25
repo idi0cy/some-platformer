@@ -5,6 +5,9 @@ extends CharacterBody2D
 @onready var hitbox = get_node('hitbox')
 @onready var hurtbox = get_node('hurtbox')
 
+@onready var coyoteTimer = get_node('coyoteFrames')
+@onready var inputBuffer = get_node('inputBuffer')
+
 const UP = Vector2(0, -1)
 const speed = 300
 const dashSpeed = 2000
@@ -15,8 +18,8 @@ var availableDashes = 1
 var sliding = false
 
 var coyoteDown = false
-var coyoteLeft = false
-var coyoteRight = false
+
+
 
 #endregion
 
@@ -32,9 +35,6 @@ func _process(delta: float) -> void:
 			availableDashes = 1
 	
 	#region | Handling jumps
-	if (Input.is_action_just_pressed('space')) && !dashing:
-		if (is_on_floor()):
-			velocity.y -= 500
 	#endregion
 	
 	#region | Handling dashes
@@ -78,7 +78,7 @@ func _process(delta: float) -> void:
 	
 	#region | Sliding code
 	
-	if coyoteDown && !dashing && Input.is_action_pressed('s'):
+	if is_on_floor() && !dashing && Input.is_action_pressed('s'):
 		if abs(velocity.x) < abs(velocity.y):
 			print(abs(velocity.y))
 		else:
@@ -86,7 +86,25 @@ func _process(delta: float) -> void:
 	
 	#endregion
 	
+	handleJumps()
+	
 	move_and_slide()
+
+
+func handleJumps():
+	if is_on_floor():
+		coyoteTimer.start()
+	if Input.is_action_just_pressed('space'):
+		inputBuffer.start()
+	
+	if !coyoteTimer.is_stopped() && !inputBuffer.is_stopped() && !dashing:
+		jump()
+		coyoteTimer.stop()
+		inputBuffer.stop()
+
+func jump():
+	velocity.y -= 500
+
 
 func _on_outer_detection_body_entered(body: Node2D) -> void:
 	

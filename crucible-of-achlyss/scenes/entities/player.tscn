@@ -44,5 +44,13 @@ shape = SubResource("RectangleShape2D_e4p34")
 [node name="outerCollision" type="CollisionShape2D" parent="outerDetection" unique_id=462287520]
 shape = SubResource("RectangleShape2D_08t41")
 
+[node name="coyoteFrames" type="Timer" parent="." unique_id=19113870]
+wait_time = 0.25
+one_shot = true
+
+[node name="inputBuffer" type="Timer" parent="." unique_id=1691522915]
+wait_time = 0.25
+one_shot = true
+
 [connection signal="body_entered" from="outerDetection" to="." method="_on_outer_detection_body_entered"]
 [connection signal="body_exited" from="outerDetection" to="." method="_on_outer_detection_body_exited"]
