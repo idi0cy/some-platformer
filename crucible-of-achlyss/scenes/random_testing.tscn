@@ -9,8 +9,8 @@
 position = Vector2(583, 327)
 
 [node name="Platform" parent="." unique_id=304735604 instance=ExtResource("2_1xtuw")]
-position = Vector2(526, 604)
-scale = Vector2(66.23004, 6.8927)
+position = Vector2(554, 608.00006)
+scale = Vector2(125.390045, 6.8927)
 
 [node name="Platform2" parent="." unique_id=1158560200 instance=ExtResource("2_1xtuw")]
 position = Vector2(584, 523)
@@ -26,4 +26,4 @@ scale = Vector2(0.8985673, 6.657856)
 
 [node name="Platform5" parent="." unique_id=1415207772 instance=ExtResource("2_1xtuw")]
 position = Vector2(378, 393)
-scale = Vector2(3.3374271, 10.804436)
+scale = Vector2(3.3374271, 12.661387)

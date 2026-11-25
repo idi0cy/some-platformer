@@ -73,8 +73,9 @@ func _process(delta: float) -> void:
 	#endregion
 	
 	handleLeftToRight()
-	handleJumps()
+	
 	handleSlides()
+	handleJumps()
 	
 	move_and_slide()
 
@@ -93,18 +94,19 @@ func handleJumps():
 		inputBuffer.stop()
 func jump():
 	velocity.y -= jumpPower
+	sliding = false
 
 func handleSlides():
 	if Input.is_action_pressed("s") && !sliding && is_on_floor() && abs(velocity.x) > (speed-1) && !dashing:
 		sliding = true
-		print("i've begun the sliding")
+		#print("i've begun the sliding")
 	if not (Input.is_action_pressed("s")) && sliding:
 		sliding = false
-		print('OH NOOOOOOOOOOOOOOOOOOOO')
+		#print('OH NOOOOOOOOOOOOOOOOOOOO')
 	if dashing:
 		sliding = false
 	
 	if sliding == true:
-		scale = scale.lerp(Vector2(1, 0.66), 0.2)
+		scale = scale.lerp(Vector2(1, 0.5), 0.2)
 	else:
 		scale = scale.lerp(Vector2(1, 1), 0.2)
