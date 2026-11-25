@@ -10,7 +10,7 @@ extends CharacterBody2D
 @onready var slideBuffer = get_node('slideBuffer')
 
 const UP = Vector2(0, -1)
-const speed = 5
+const speed = 300
 const jumpPower = 400
 const dashSpeed = 1750 + speed
 
@@ -51,15 +51,15 @@ func _process(delta: float) -> void:
 	
 	handleDashes()
 	
-	print(velocity.x)
-	
 	move_and_slide()
 
 func handleLeftToRight():
 	if !dashing:
 		var directionX = Input.get_axis('a', 'd')
+		print(directionX)
 		leftRightWeight = directionX * speed
-		position.x += leftRightWeight
+	if abs(velocity.x) <= abs(leftRightWeight) || leftRightWeight == 0:
+		velocity.x = leftRightWeight
 
 func handleJumps():
 	if is_on_floor():
@@ -108,7 +108,7 @@ func handleDashes():
 			
 			dashing = false
 			
-			oldVelocity = oldVelocity + (Vector2(250,100) * dashDirection)
+			#oldVelocity = oldVelocity + (Vector2(250,100) * dashDirection)
 			
 			velocity = oldVelocity
 			$Sprite2D.modulate = Color(1.0, 1.0, 1.0, 1.0)
