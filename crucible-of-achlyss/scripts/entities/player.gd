@@ -38,9 +38,6 @@ func _process(delta: float) -> void:
 		if !dashing:
 			availableDashes = 1
 	
-	#region | Handling jumps
-	#endregion
-	
 	#region | Handling dashes
 	if (!dashing) && (Input.is_action_just_pressed('dash')) && (availableDashes > 0):
 		var dashDirection = Input.get_vector("a", "d", "w", "s")
@@ -75,11 +72,14 @@ func _process(delta: float) -> void:
 	
 	#endregion
 	
+	handleLeftToRight()
 	handleJumps()
 	handleSlides()
 	
 	move_and_slide()
 
+func handleLeftToRight():
+	pass
 
 func handleJumps():
 	if is_on_floor():
@@ -95,12 +95,20 @@ func jump():
 	velocity.y -= jumpPower
 
 func handleSlides():
-	if Input.is_action_pressed("s") && !sliding && is_on_floor() && abs(velocity.x) > speed && !dashing:
+	if Input.is_action_pressed("s") && !sliding && is_on_floor() && abs(velocity.x) > (speed-1) && !dashing:
 		sliding = true
 		print("i've begun the sliding")
-	if not (Input.is_action_pressed("s") && is_on_floor()) && sliding:
+	if not (Input.is_action_pressed("s")) && sliding:
 		sliding = false
 		print('OH NOOOOOOOOOOOOOOOOOOOO')
+	if dashing:
+		sliding = false
+	
+	if sliding == true:
+		scale = scale.lerp(Vector2(1, 0.66), 0.2)
+	else:
+		scale = scale.lerp(Vector2(1, 1), 0.2)
+	
 
 func _on_outer_detection_body_entered(body: Node2D) -> void:
 	
