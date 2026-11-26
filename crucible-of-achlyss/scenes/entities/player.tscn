@@ -37,7 +37,6 @@ visible = false
 shape = SubResource("RectangleShape2D_b0kkn")
 
 [node name="collisionShape" type="CollisionShape2D" parent="." unique_id=1189958589]
-visible = false
 shape = SubResource("RectangleShape2D_e4p34")
 
 [node name="coyoteFrames" type="Timer" parent="." unique_id=19113870]

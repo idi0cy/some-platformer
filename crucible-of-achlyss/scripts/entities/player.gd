@@ -21,11 +21,13 @@ var midairMomentum = Vector2(0,0)
 
 const slideThresh = 500
 var slideSpeed = 0
+var sliding = false
 
 var dashing = false
 var availableDashes = 1
 
-var sliding = false
+var clinging = false
+var clingSpeedWeight = 0
 
 #endregion
 
@@ -34,26 +36,20 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if !(is_on_floor()):
-		if !dashing:
+		if !dashing && !clinging:
 			velocity += get_gravity() * delta
 	else:
 		if !dashing:
 			availableDashes = 1
 	
-	#region | Wall jumping and all that
-	
-	if (is_on_wall() && velocity.y > 0):
-		if velocity.y > 150:
-			velocity.y = 150
-	
-	#endregion
-	
 	handleSlides()
 	handleJumps()
 	handleLeftToRight()
 	handleDashes()
+	handleWallMechanics()
 	
 	move_and_slide()
+
 
 func handleLeftToRight():
 	if !dashing:
@@ -133,7 +129,6 @@ func handleSlides():
 			slideParticles.emitting = false
 
 
-
 func handleDashes():
 	if (!dashing) && (Input.is_action_just_pressed('dash')) && (availableDashes > 0) && !sliding:
 		var dashDirection = Input.get_vector("a", "d", "w", "s")
@@ -158,3 +153,26 @@ func handleDashes():
 			
 			velocity = oldVelocity
 			$Sprite2D.modulate = Color(1.0, 1.0, 1.0, 1.0)
+
+func handleWallMechanics():
+	if is_on_wall() && !is_on_floor() && !dashing && !sliding:
+		var directionX = Input.get_axis('a','d')
+		
+		if !clinging && (get_wall_normal()[0] * -1) == directionX:
+			clinging = true
+			clingSpeedWeight = velocity.y
+			if clingSpeedWeight < 150:
+				clingSpeedWeight = 150
+	else:
+		clinging = false
+	
+	if clinging:
+		var directionY = Input.get_axis('s','w')
+		
+		if directionY == 1:
+			pass
+		elif directionY == -1:
+			pass
+		else:
+			pass
+			
