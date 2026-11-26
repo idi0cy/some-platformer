@@ -10,7 +10,7 @@ extends CharacterBody2D
 
 @onready var slideParticles = get_node('slideParticles')
 
-const UP = Vector2(0, -1)
+#const UP = Vector2(0, -1)
 const speed = 250
 const jumpPower = 350
 const dashSpeed = 1750 + speed
@@ -110,16 +110,19 @@ func handleSlides():
 		sliding = false
 		slideParticles.emitting = false
 	
-	var directionX = Input.get_axis('a', 'd')
-	
 	if sliding:
 		scale = scale.lerp(Vector2(1, 0.75), 0.1)
 	else:
 		scale = scale.lerp(Vector2(1, 1), 0.1)
 	
+	var directionX = Input.get_axis('a', 'd')
+	
+	if (Input.is_action_pressed('a') || Input.is_action_pressed('d')) && directionX == 0 && sliding:
+		shortJump()
+	
 	if sliding && directionX != 0:
 		velocity.x = slideSpeed
-	else:
+	elif sliding && !(Input.is_action_pressed('a') || Input.is_action_pressed('d')):
 		if !(velocity.x > -15 && velocity.x < 15):
 			if velocity.x > 0:
 				velocity.x -= 15
@@ -128,9 +131,6 @@ func handleSlides():
 		else:
 			sliding = false
 			slideParticles.emitting = false
-	if sliding && (directionX != 0):
-		if (abs(velocity.x) == velocity.x && directionX == -1) || (abs(velocity.x) != velocity.x && directionX == 1):
-			shortJump()
 
 
 
