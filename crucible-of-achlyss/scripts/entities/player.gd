@@ -7,13 +7,12 @@ extends CharacterBody2D
 
 @onready var coyoteTimer = get_node('coyoteFrames')
 @onready var inputBuffer = get_node('inputBuffer')
-@onready var slideBuffer = get_node('slideBuffer')
 
 @onready var slideParticles = get_node('slideParticles')
 
 const UP = Vector2(0, -1)
-const speed = 300
-const jumpPower = 400
+const speed = 250
+const jumpPower = 350
 const dashSpeed = 1750 + speed
 
 var leftRightWeight = 0
@@ -93,6 +92,10 @@ func jump():
 	velocity.y -= jumpPower
 	sliding = false
 	slideParticles.emitting = false
+func shortJump():
+	velocity.y -= 250
+	sliding = false
+	slideParticles.emitting = false
 
 func handleSlides():
 	
@@ -117,7 +120,6 @@ func handleSlides():
 	if sliding && directionX != 0:
 		velocity.x = slideSpeed
 	else:
-		pass
 		if !(velocity.x > -15 && velocity.x < 15):
 			if velocity.x > 0:
 				velocity.x -= 15
@@ -126,10 +128,14 @@ func handleSlides():
 		else:
 			sliding = false
 			slideParticles.emitting = false
+	if sliding && (directionX != 0):
+		if (abs(velocity.x) == velocity.x && directionX == -1) || (abs(velocity.x) != velocity.x && directionX == 1):
+			shortJump()
+
 
 
 func handleDashes():
-	if (!dashing) && (Input.is_action_just_pressed('dash')) && (availableDashes > 0):
+	if (!dashing) && (Input.is_action_just_pressed('dash')) && (availableDashes > 0) && !sliding:
 		var dashDirection = Input.get_vector("a", "d", "w", "s")
 		
 		if dashDirection != Vector2(0,0):
@@ -146,8 +152,9 @@ func handleDashes():
 			
 			dashing = false
 			
-			midairMomentum += (Vector2(250, 100) * dashDirection)
-			oldVelocity = oldVelocity + (Vector2(250,100) * dashDirection)
+			if !sliding:
+				midairMomentum += (Vector2(250, 100) * dashDirection)
+				oldVelocity = oldVelocity + (Vector2(250,100) * dashDirection)
 			
 			velocity = oldVelocity
 			$Sprite2D.modulate = Color(1.0, 1.0, 1.0, 1.0)

@@ -48,10 +48,6 @@ one_shot = true
 wait_time = 0.1
 one_shot = true
 
-[node name="slideBuffer" type="Timer" parent="." unique_id=2049270072]
-wait_time = 0.1
-one_shot = true
-
 [node name="slideParticles" type="CPUParticles2D" parent="." unique_id=890175218]
 position = Vector2(0, 12)
 emitting = false
