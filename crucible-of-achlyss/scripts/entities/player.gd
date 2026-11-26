@@ -64,11 +64,11 @@ func handleLeftToRight():
 	
 	if !is_on_floor():
 		#midair velocity code goes here
-		if !(midairMomentum[0] < 7 && midairMomentum[0] > -7):
+		if !(midairMomentum[0] < 10 && midairMomentum[0] > -10):
 			if midairMomentum[0] > 0:
-				midairMomentum[0] -= 7
+				midairMomentum[0] -= 10
 			else:
-				midairMomentum[0] += 7
+				midairMomentum[0] += 10
 	else:
 		midairMomentum = Vector2(0,0)
 	
@@ -186,4 +186,3 @@ func handleWallMechanics():
 			else:
 				clingEntrySpeed += 4
 		velocity.y = clingEntrySpeed
-		print(clingEntrySpeed)
