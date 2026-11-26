@@ -9,6 +9,8 @@ extends CharacterBody2D
 @onready var inputBuffer = get_node('inputBuffer')
 @onready var slideBuffer = get_node('slideBuffer')
 
+@onready var slideParticles = get_node('slideParticles')
+
 const UP = Vector2(0, -1)
 const speed = 300
 const jumpPower = 400
@@ -19,6 +21,7 @@ var leftRightValue = 0
 var midairMomentum = Vector2(0,0)
 
 const slideThresh = 500
+var slideSpeed = 0
 
 var dashing = false
 var availableDashes = 1
@@ -28,7 +31,7 @@ var sliding = false
 #endregion
 
 func _ready() -> void:
-	pass
+	slideParticles.emitting = false
 
 func _process(delta: float) -> void:
 	if !(is_on_floor()):
@@ -46,16 +49,12 @@ func _process(delta: float) -> void:
 	
 	#endregion
 	
-	handleLeftToRight()
-	
 	handleSlides()
 	handleJumps()
-	
+	handleLeftToRight()
 	handleDashes()
 	
 	move_and_slide()
-	
-	print(midairMomentum[0])
 
 func handleLeftToRight():
 	if !dashing:
@@ -77,7 +76,7 @@ func handleLeftToRight():
 	else:
 		midairMomentum = Vector2(0,0)
 	
-	if !dashing:
+	if !dashing && !sliding:
 		velocity.x = midairMomentum[0] + leftRightWeight
 
 func handleJumps():
@@ -93,19 +92,29 @@ func handleJumps():
 func jump():
 	velocity.y -= jumpPower
 	sliding = false
+	slideParticles.emitting = false
 
 func handleSlides():
-	if Input.is_action_pressed("s") && !sliding && is_on_floor() && abs(velocity.x) > (speed-11) && !dashing:
+	
+	if Input.is_action_pressed("s") && !sliding && is_on_floor() && abs(velocity.x) > (speed) && !dashing:
 		sliding = true
+		slideSpeed = velocity.x * 1.15
+		slideParticles.emitting = true
 	if not (Input.is_action_pressed("s")) && sliding:
 		sliding = false
+		slideParticles.emitting = false
 	if dashing:
 		sliding = false
+		slideParticles.emitting = false
 	
-	if sliding == true:
-		scale = scale.lerp(Vector2(1, 0.5), 0.2)
+	if sliding:
+		scale = scale.lerp(Vector2(1, 0.75), 0.1)
 	else:
-		scale = scale.lerp(Vector2(1, 1), 0.2)
+		scale = scale.lerp(Vector2(1, 1), 0.1)
+	
+	if sliding:
+		velocity.x = slideSpeed
+	
 
 func handleDashes():
 	if (!dashing) && (Input.is_action_just_pressed('dash')) && (availableDashes > 0):
