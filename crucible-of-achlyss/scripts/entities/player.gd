@@ -15,6 +15,8 @@ const jumpPower = 400
 const dashSpeed = 1750 + speed
 
 var leftRightWeight = 0
+var leftRightValue = 0
+var midairMomentum = Vector2(0,0)
 
 const slideThresh = 500
 
@@ -52,14 +54,31 @@ func _process(delta: float) -> void:
 	handleDashes()
 	
 	move_and_slide()
+	
+	print(midairMomentum[0])
 
 func handleLeftToRight():
 	if !dashing:
 		var directionX = Input.get_axis('a', 'd')
-		print(directionX)
 		leftRightWeight = directionX * speed
 	if abs(velocity.x) <= abs(leftRightWeight) || leftRightWeight == 0:
-		velocity.x = leftRightWeight
+		#velocity.x = leftRightWeight
+		pass
+	else:
+		midairMomentum[0] += leftRightWeight * 0.02
+	
+	if !is_on_floor():
+		#midair velocity code goes here
+		if !(midairMomentum[0] < 7 && midairMomentum[0] > -7):
+			if midairMomentum[0] > 0:
+				midairMomentum[0] -= 7
+			else:
+				midairMomentum[0] += 7
+	else:
+		midairMomentum = Vector2(0,0)
+	
+	if !dashing:
+		velocity.x = midairMomentum[0] + leftRightWeight
 
 func handleJumps():
 	if is_on_floor():
@@ -76,12 +95,10 @@ func jump():
 	sliding = false
 
 func handleSlides():
-	if Input.is_action_pressed("s") && !sliding && is_on_floor() && abs(velocity.x) > (speed-1) && !dashing:
+	if Input.is_action_pressed("s") && !sliding && is_on_floor() && abs(velocity.x) > (speed-11) && !dashing:
 		sliding = true
-		#print("i've begun the sliding")
 	if not (Input.is_action_pressed("s")) && sliding:
 		sliding = false
-		#print('OH NOOOOOOOOOOOOOOOOOOOO')
 	if dashing:
 		sliding = false
 	
@@ -108,7 +125,8 @@ func handleDashes():
 			
 			dashing = false
 			
-			#oldVelocity = oldVelocity + (Vector2(250,100) * dashDirection)
+			midairMomentum += (Vector2(250, 100) * dashDirection)
+			oldVelocity = oldVelocity + (Vector2(250,100) * dashDirection)
 			
 			velocity = oldVelocity
 			$Sprite2D.modulate = Color(1.0, 1.0, 1.0, 1.0)
