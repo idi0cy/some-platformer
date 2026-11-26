@@ -107,14 +107,26 @@ func handleSlides():
 		sliding = false
 		slideParticles.emitting = false
 	
+	var directionX = Input.get_axis('a', 'd')
+	
 	if sliding:
 		scale = scale.lerp(Vector2(1, 0.75), 0.1)
 	else:
 		scale = scale.lerp(Vector2(1, 1), 0.1)
 	
-	if sliding:
+	if sliding && directionX != 0:
 		velocity.x = slideSpeed
-	
+	else:
+		pass
+		if !(velocity.x > -15 && velocity.x < 15):
+			if velocity.x > 0:
+				velocity.x -= 15
+			else:
+				velocity.x += 15
+		else:
+			sliding = false
+			slideParticles.emitting = false
+
 
 func handleDashes():
 	if (!dashing) && (Input.is_action_just_pressed('dash')) && (availableDashes > 0):
