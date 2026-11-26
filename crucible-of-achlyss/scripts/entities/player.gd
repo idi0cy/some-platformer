@@ -28,6 +28,7 @@ var availableDashes = 1
 
 var clinging = false
 var clingSpeedWeight = 0
+var clingEntrySpeed = 0
 
 #endregion
 
@@ -149,10 +150,12 @@ func handleDashes():
 			
 			if !sliding:
 				midairMomentum += (Vector2(250, 100) * dashDirection)
-				oldVelocity = oldVelocity + (Vector2(250,100) * dashDirection)
+				oldVelocity = oldVelocity + (Vector2(250,200) * dashDirection)
 			
 			velocity = oldVelocity
 			$Sprite2D.modulate = Color(1.0, 1.0, 1.0, 1.0)
+
+
 
 func handleWallMechanics():
 	if is_on_wall() && !is_on_floor() && !dashing && !sliding:
@@ -161,8 +164,10 @@ func handleWallMechanics():
 		if !clinging && (get_wall_normal()[0] * -1) == directionX:
 			clinging = true
 			clingSpeedWeight = velocity.y
-			if clingSpeedWeight < 150:
-				clingSpeedWeight = 150
+			clingSpeedWeight *= 0.75
+			if clingSpeedWeight < 200:
+				clingSpeedWeight = 200
+			clingEntrySpeed = velocity.y
 	else:
 		clinging = false
 	
@@ -175,4 +180,10 @@ func handleWallMechanics():
 			pass
 		else:
 			pass
-			
+		if !(clingEntrySpeed > (clingSpeedWeight-5) && clingEntrySpeed < (clingSpeedWeight+5)):
+			if velocity.y > clingSpeedWeight:
+				clingEntrySpeed -= 4
+			else:
+				clingEntrySpeed += 4
+		velocity.y = clingEntrySpeed
+		print(clingEntrySpeed)

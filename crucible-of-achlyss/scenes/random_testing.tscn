@@ -6,7 +6,7 @@
 [node name="testingEnv" type="Node2D" unique_id=1161666507]
 
 [node name="Player" parent="." unique_id=912380446 instance=ExtResource("1_4ckl3")]
-position = Vector2(583, 327)
+position = Vector2(510, -221)
 
 [node name="Platform" parent="." unique_id=304735604 instance=ExtResource("2_1xtuw")]
 position = Vector2(580, 671.00006)
@@ -25,11 +25,11 @@ position = Vector2(243, 242)
 scale = Vector2(0.8985673, 6.657856)
 
 [node name="Platform5" parent="." unique_id=1415207772 instance=ExtResource("2_1xtuw")]
-position = Vector2(404, 456)
-scale = Vector2(3.3374271, 12.661387)
+position = Vector2(390, 154)
+scale = Vector2(3.337, 40)
 
 [node name="Platform6" parent="." unique_id=1067116858 instance=ExtResource("2_1xtuw")]
-position = Vector2(562, 23)
+position = Vector2(559, -65)
 scale = Vector2(0.899, 3)
 
 [node name="Platform7" parent="." unique_id=1873176592 instance=ExtResource("2_1xtuw")]
@@ -70,4 +70,8 @@ scale = Vector2(3.3374271, 12.661387)
 
 [node name="Platform16" parent="." unique_id=1122382130 instance=ExtResource("2_1xtuw")]
 position = Vector2(-810.9999, -169.99998)
+scale = Vector2(0.899, 3)
+
+[node name="Platform17" parent="." unique_id=1755740716 instance=ExtResource("2_1xtuw")]
+position = Vector2(563.00006, 187.99998)
 scale = Vector2(0.899, 3)
