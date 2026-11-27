@@ -2,6 +2,8 @@ extends CharacterBody2D
 
 #region | Setting up initial variables
 
+@onready var playerSprite = get_node('Sprite2D')
+
 @onready var hitbox = get_node('hitbox')
 @onready var hurtbox = get_node('hurtbox')
 
@@ -9,6 +11,7 @@ extends CharacterBody2D
 @onready var inputBuffer = get_node('inputBuffer')
 
 @onready var slideParticles = get_node('slideParticles')
+@onready var clingingParticles = get_node('clingingParticles')
 
 #const UP = Vector2(0, -1)
 const speed = 250
@@ -33,7 +36,14 @@ var clingEntrySpeed = 0
 #endregion
 
 func _ready() -> void:
+	#setting up everything
+	playerSprite.show()
+	
+	slideParticles.show()
+	clingingParticles.show()
+	
 	slideParticles.emitting = false
+	clingingParticles.emitting = false
 
 func _process(delta: float) -> void:
 	if !(is_on_floor()):
@@ -162,14 +172,30 @@ func handleWallMechanics():
 		var directionX = Input.get_axis('a','d')
 		
 		if !clinging && (get_wall_normal()[0] * -1) == directionX:
+			if directionX == 1:
+				clingingParticles.position = Vector2(11,-8)
+				clingingParticles.initial_velocity_min = -25
+				clingingParticles.initial_velocity_max = -50
+			elif directionX == -1:
+				clingingParticles.position = Vector2(-11, -8)
+				clingingParticles.initial_velocity_min = 25
+				clingingParticles.initial_velocity_max = 50
+			
 			clinging = true
 			clingSpeedWeight = velocity.y
 			clingSpeedWeight *= 0.75
 			if clingSpeedWeight < 200:
 				clingSpeedWeight = 200
 			clingEntrySpeed = velocity.y
+		elif !clinging:
+			clinging = false
 	else:
 		clinging = false
+	
+	if clinging == true && abs(velocity.y) == velocity.y:
+		clingingParticles.emitting = true
+	else:
+		clingingParticles.emitting = false
 	
 	if clinging:
 		var directionY = Input.get_axis('s','w')
