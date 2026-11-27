@@ -13,12 +13,12 @@ extends CharacterBody2D
 @onready var slideParticles = get_node('slideParticles')
 @onready var clingingParticles = get_node('clingingParticles')
 
-#const UP = Vector2(0, -1)
 const speed = 250
 const jumpPower = 350
 const dashSpeed = 1750 + speed
 
 var leftRightWeight = 0
+var leftRightWeightMidair = 0
 var leftRightValue = 0
 var midairMomentum = Vector2(0,0)
 var groundedMomentum = Vector2(0,0)
@@ -64,7 +64,6 @@ func _process(delta: float) -> void:
 
 
 
-
 #I'll have to rework this system like every five seconds bruh
 func handleLeftToRight():
 	if !dashing:
@@ -76,7 +75,7 @@ func handleLeftToRight():
 		#midairMomentum[0] = leftRightWeight
 	#else:
 		#pass
-	midairMomentum[0] += leftRightWeight * 0.02
+		#midairMomentum[0] += leftRightWeight * 0.02
 	
 	if !is_on_floor():
 		if !(midairMomentum[0] < 10 && midairMomentum[0] > -10):
@@ -86,14 +85,13 @@ func handleLeftToRight():
 				midairMomentum[0] += 10
 	else:
 		midairMomentum = Vector2(0,0)
+		leftRightWeightMidair = 0
 	
 	if !dashing && !sliding && is_on_floor():
-		#velocity.x = midairMomentum[0] + leftRightWeight
-		velocity.x = midairMomentum[0] + leftRightWeight
+		velocity.x = leftRightWeight
 	elif !dashing && !sliding:
-		velocity.x = midairMomentum[0]
-		if abs(midairMomentum[0]) <= abs(leftRightWeight / 3):
-			velocity.x = midairMomentum[0] + leftRightWeight
+		if abs(midairMomentum[0]) < abs(leftRightWeight):
+			velocity.x =leftRightWeight
 		else:
 			velocity.x = midairMomentum[0]
 
@@ -201,8 +199,9 @@ func handleDashes():
 			dashing = false
 			
 			if !sliding:
-				midairMomentum += (Vector2(250, 100) * dashDirection)
-				oldVelocity = oldVelocity + (Vector2(250,200) * dashDirection)
+				midairMomentum += (Vector2(500, 200) * dashDirection)
+				print(dashDirection)
+				oldVelocity = oldVelocity + (Vector2(500,200) * dashDirection)
 			
 			velocity = oldVelocity
 			$Sprite2D.modulate = Color(1.0, 1.0, 1.0, 1.0)
