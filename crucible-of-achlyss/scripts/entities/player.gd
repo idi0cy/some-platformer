@@ -21,6 +21,7 @@ const dashSpeed = 1750 + speed
 var leftRightWeight = 0
 var leftRightValue = 0
 var midairMomentum = Vector2(0,0)
+var groundedMomentum = Vector2(0,0)
 
 const slideThresh = 500
 var slideSpeed = 0
@@ -62,19 +63,22 @@ func _process(delta: float) -> void:
 	move_and_slide()
 
 
+
+
 #I'll have to rework this system like every five seconds bruh
 func handleLeftToRight():
 	if !dashing:
 		var directionX = Input.get_axis('a', 'd')
 		leftRightWeight = directionX * speed
-	if abs(velocity.x) <= abs(leftRightWeight) || leftRightWeight == 0:
-		#velocity.x = leftRightWeight
-		pass
-	else:
-		midairMomentum[0] += leftRightWeight * 0.02
+	
+	##module for modifying midairmomentum with the leftrightweight
+	#if abs(midairMomentum[0]) <= abs(leftRightWeight):
+		#midairMomentum[0] = leftRightWeight
+	#else:
+		#pass
+	midairMomentum[0] += leftRightWeight * 0.02
 	
 	if !is_on_floor():
-		#midair velocity code goes here
 		if !(midairMomentum[0] < 10 && midairMomentum[0] > -10):
 			if midairMomentum[0] > 0:
 				midairMomentum[0] -= 10
@@ -83,8 +87,17 @@ func handleLeftToRight():
 	else:
 		midairMomentum = Vector2(0,0)
 	
-	if !dashing && !sliding:
+	if !dashing && !sliding && is_on_floor():
+		#velocity.x = midairMomentum[0] + leftRightWeight
 		velocity.x = midairMomentum[0] + leftRightWeight
+	elif !dashing && !sliding:
+		velocity.x = midairMomentum[0]
+		if abs(midairMomentum[0]) <= abs(leftRightWeight / 3):
+			velocity.x = midairMomentum[0] + leftRightWeight
+		else:
+			velocity.x = midairMomentum[0]
+
+
 
 func handleJumps():
 	if is_on_floor():
