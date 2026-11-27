@@ -66,6 +66,7 @@ color = Color(1, 0.827451, 0, 1)
 
 [node name="clingingParticles" type="CPUParticles2D" parent="." unique_id=2139421489]
 position = Vector2(11, -8)
+emitting = false
 amount = 16
 randomness = 0.9
 lifetime_randomness = 0.6
