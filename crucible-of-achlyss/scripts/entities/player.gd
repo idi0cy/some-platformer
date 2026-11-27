@@ -62,6 +62,7 @@ func _process(delta: float) -> void:
 	move_and_slide()
 
 
+#I'll have to rework this system like every five seconds bruh
 func handleLeftToRight():
 	if !dashing:
 		var directionX = Input.get_axis('a', 'd')
@@ -104,6 +105,8 @@ func shortJump():
 	sliding = false
 	slideParticles.emitting = false
 
+
+
 func handleSlides():
 	
 	if Input.is_action_pressed("s") && !sliding && is_on_floor() && abs(velocity.x) > (speed) && !dashing:
@@ -127,17 +130,41 @@ func handleSlides():
 	if (Input.is_action_pressed('a') || Input.is_action_pressed('d')) && directionX == 0 && sliding:
 		shortJump()
 	
+	#print(directionX)
+	
 	if sliding && directionX != 0:
-		velocity.x = slideSpeed
-	elif sliding && !(Input.is_action_pressed('a') || Input.is_action_pressed('d')):
-		if !(velocity.x > -15 && velocity.x < 15):
-			if velocity.x > 0:
-				velocity.x -= 15
+		if (directionX == -1 && abs(velocity.x) == velocity.x):
+			if !(slideSpeed > -15 && slideSpeed < 15):
+				if slideSpeed > 0:
+					slideSpeed -= 15
+				else:
+					slideSpeed += 15
 			else:
-				velocity.x += 15
+				sliding = false
+				slideParticles.emitting = false
+		elif (directionX == 1 && abs(velocity.x) != velocity.x):
+			if !(slideSpeed > -15 && slideSpeed < 15):
+				if slideSpeed > 0:
+					slideSpeed -= 15
+				else:
+					slideSpeed += 15
+			else:
+				sliding = false
+				slideParticles.emitting = false
+		
+		#velocity.x = slideSpeed
+	elif sliding && !(Input.is_action_pressed('a') || Input.is_action_pressed('d')):
+		if !(slideSpeed > -15 && slideSpeed < 15):
+			if slideSpeed > 0:
+				slideSpeed -= 15
+			else:
+				slideSpeed += 15
 		else:
 			sliding = false
 			slideParticles.emitting = false
+	if sliding:
+		velocity.x = slideSpeed
+
 
 
 func handleDashes():
@@ -147,6 +174,8 @@ func handleDashes():
 		if dashDirection != Vector2(0,0):
 			
 			availableDashes -= 1
+			
+			coyoteTimer.stop()
 			
 			var oldVelocity = velocity
 			oldVelocity.y = 0
@@ -212,3 +241,13 @@ func handleWallMechanics():
 				else:
 					clingEntrySpeed += 4
 		velocity.y = clingEntrySpeed
+		
+	if clinging:
+		if Input.is_action_just_pressed("space"):
+			var directionX = Input.get_axis('a','d')
+			clinging = false
+			wallJump(directionX * -1)
+
+func wallJump(orientation):
+	midairMomentum[0] += 400 * orientation
+	velocity.y = -400
