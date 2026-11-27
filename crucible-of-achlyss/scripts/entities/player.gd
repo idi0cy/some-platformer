@@ -187,12 +187,12 @@ func handleWallMechanics():
 			if clingSpeedWeight < 200:
 				clingSpeedWeight = 200
 			clingEntrySpeed = velocity.y
-		elif !clinging:
+		elif clinging && directionX == 0:
 			clinging = false
 	else:
 		clinging = false
 	
-	if clinging == true && abs(velocity.y) == velocity.y:
+	if clinging == true && abs(velocity.y) == velocity.y && velocity.y > 100:
 		clingingParticles.emitting = true
 	else:
 		clingingParticles.emitting = false
@@ -201,14 +201,14 @@ func handleWallMechanics():
 		var directionY = Input.get_axis('s','w')
 		
 		if directionY == 1:
-			pass
+			clingEntrySpeed *= 0.96
 		elif directionY == -1:
-			pass
+			if clingEntrySpeed < (clingSpeedWeight * 1.5):
+				clingEntrySpeed *= 1.02
 		else:
-			pass
-		if !(clingEntrySpeed > (clingSpeedWeight-5) && clingEntrySpeed < (clingSpeedWeight+5)):
-			if velocity.y > clingSpeedWeight:
-				clingEntrySpeed -= 4
-			else:
-				clingEntrySpeed += 4
+			if !(clingEntrySpeed > (clingSpeedWeight-5) && clingEntrySpeed < (clingSpeedWeight+5)):
+				if velocity.y > clingSpeedWeight:
+					clingEntrySpeed -= 4
+				else:
+					clingEntrySpeed += 4
 		velocity.y = clingEntrySpeed
