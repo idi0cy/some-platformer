@@ -14,9 +14,14 @@ extends CharacterBody2D
 @onready var slideParticles = get_node('slideParticles')
 @onready var clingingParticles = get_node('clingingParticles')
 
-const accel = 60
-const speed = 300
-const jumpPower = 750
+const jumpPower_default = 750
+const accel_default = 50
+const speed_default = 250
+
+const accel = 50
+const speed = 250
+var jumpPower = 750
+const slideStopHopPower = 500
 const dashSpeed = 1250 + speed
 
 var momentum = Vector2(0,0)
@@ -29,6 +34,9 @@ var jumping = false
 var accelJumping = false
 var deaccelJumping = false
 var jumpMomentum = 0
+
+var slideStopHopMomentum = 0
+var slideStopHopping = false
 
 var playerGravity = Vector2(0,0)
 
@@ -63,12 +71,13 @@ func _process(delta: float) -> void:
 	A = A + (B - A) * 0.2
 	
 	if !(is_on_floor()):
-		if !dashing && !clinging && !jumping:
+		if !dashing && !clinging && !jumping && !slideStopHopping:
 			playerGravity += get_gravity() * delta
 	else:
 		if !dashing:
 			availableDashes = 1
 			jumpMomentum = 0
+			slideStopHopMomentum = 0
 	
 	if is_on_floor():
 		playerGravity = Vector2(0,0)
@@ -77,6 +86,11 @@ func _process(delta: float) -> void:
 		jumping = true
 	else:
 		jumping = false
+	
+	if slideStopHopMomentum != 0:
+		slideStopHopping = true
+	else:
+		slideStopHopping = false
 	
 	handleSlides()
 	handleJumps()
@@ -110,7 +124,7 @@ func handleMomentum():
 				leftRightPlayer += accel
 	
 		velocity.x = leftRightPlayer + dashMomentum[0]
-		velocity.y = dashMomentum[1] - jumpMomentum
+		velocity.y = dashMomentum[1] - jumpMomentum - slideStopHopMomentum
 		velocity += playerGravity
 	elif sliding && !dashing:
 		velocity.x = slideSpeed
@@ -124,6 +138,7 @@ func handleJumps():
 		inputBuffer.start()
 	
 	if !coyoteTimer.is_stopped() && !inputBuffer.is_stopped() && !dashing:
+		playerGravity = Vector2(0,0)
 		jump()
 		coyoteTimer.stop()
 		inputBuffer.stop()
@@ -145,13 +160,22 @@ func handleJumps():
 			jumpMomentum = 0
 		if is_on_ceiling():
 			jumpMomentum = 0
+	if slideStopHopping:
+		if slideStopHopMomentum > 75:
+			slideStopHopMomentum = slideStopHopMomentum + (75 - slideStopHopMomentum) * 0.2
+		
+		if floor(slideStopHopMomentum) - 2 < 75:
+			slideStopHopMomentum = 0
+		if is_on_ceiling():
+			slideStopHopMomentum = 0
 func jump():
 	accelJumping = true
 	jumpMomentum += jumpPower
 	sliding = false
 	slideParticles.emitting = false
 func shortJump():
-	jumpMomentum -= (jumpPower - 150)
+	slideStopHopMomentum += slideStopHopPower
+	#jumpMomentum -= (jumpPower - 150)
 	sliding = false
 	slideParticles.emitting = false
 
@@ -184,7 +208,8 @@ func handleSlides():
 	var directionX = Input.get_axis('a', 'd')
 	
 	if (Input.is_action_pressed('a') || Input.is_action_pressed('d')) && directionX == 0 && sliding:
-		shortJump()
+		if is_on_floor():
+			shortJump()
 	
 	if sliding && directionX != 0:
 		if (directionX == -1 && abs(velocity.x) == velocity.x):
