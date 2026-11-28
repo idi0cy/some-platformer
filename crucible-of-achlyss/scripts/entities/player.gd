@@ -20,7 +20,7 @@ const speed_default = 250
 
 const accel = 50
 const speed = 250
-var jumpPower = 750
+var jumpPower = 900
 const slideStopHopPower = 500
 const dashSpeed = 1250 + speed
 
@@ -148,16 +148,14 @@ func handleJumps():
 			if jumpMomentum > 100:
 				jumpMomentum = jumpMomentum + (100 - jumpMomentum) * 0.2
 		elif deaccelJumping:
-			pass
-			
-		else:
-			pass
-		if jumpMomentum < 0:
-			jumpMomentum = 0
-		
+			jumpMomentum -= 24
+		if Input.is_action_just_released('space'):
+			accelJumping = false
+			deaccelJumping = true
 		if floor(jumpMomentum) - 2 < 100:
 			accelJumping = false
-			jumpMomentum = 0
+			deaccelJumping = true
+			#jumpMomentum = 0
 		if is_on_ceiling():
 			jumpMomentum = 0
 	if slideStopHopping:
@@ -168,6 +166,7 @@ func handleJumps():
 			slideStopHopMomentum = 0
 		if is_on_ceiling():
 			slideStopHopMomentum = 0
+	print(velocity.y)
 func jump():
 	accelJumping = true
 	jumpMomentum += jumpPower
