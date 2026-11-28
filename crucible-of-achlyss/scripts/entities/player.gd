@@ -15,8 +15,8 @@ extends CharacterBody2D
 
 const accel = 60
 const speed = 300
-const jumpPower = 350
-const dashSpeed = 1750 + speed
+const jumpPower = 400
+const dashSpeed = 1250 + speed
 
 var momentum = Vector2(0,0)
 var leftRightPlayer = 0
@@ -24,6 +24,9 @@ var leftRightValue = 0
 var dashMomentum = Vector2(0,0)
 var groundedMomentum = Vector2(0,0)
 
+var jumping = false
+var accelJumping = false
+var deaccelJumping = false
 var jumpMomentum = 0
 
 var playerGravity = Vector2(0,0)
@@ -51,20 +54,31 @@ func _ready() -> void:
 	slideParticles.emitting = false
 	clingingParticles.emitting = false
 
+var A = 100
+var B = 200
+
 func _process(delta: float) -> void:
+	A = A + (B - A) * 0.2
+	
 	if !(is_on_floor()):
-		if !dashing && !clinging:
+		if !dashing && !clinging && !jumping:
 			playerGravity += get_gravity() * delta
 	else:
 		if !dashing:
 			availableDashes = 1
+			jumpMomentum = 0
 	
 	if is_on_floor():
 		playerGravity = Vector2(0,0)
 	
+	if jumpMomentum != 0:
+		jumping = true
+	else:
+		jumping = false
+	
 	handleSlides()
 	handleJumps()
-	handleLeftToRight()
+	handleMomentum()
 	handleDashes()
 	handleWallMechanics()
 	
@@ -73,7 +87,7 @@ func _process(delta: float) -> void:
 
 
 #I'll have to rework this system like every five seconds bruh
-func handleLeftToRight():
+func handleMomentum():
 	#if !dashing:
 		#var directionX = Input.get_axis('a', 'd')
 		#leftRightWeight = directionX * speed
@@ -117,7 +131,7 @@ func handleLeftToRight():
 				leftRightPlayer += accel
 	
 		velocity.x = leftRightPlayer + dashMomentum[0]
-		velocity.y = dashMomentum[1] + jumpMomentum
+		velocity.y = dashMomentum[1] - jumpMomentum
 		velocity += playerGravity
 
 
@@ -132,12 +146,33 @@ func handleJumps():
 		jump()
 		coyoteTimer.stop()
 		inputBuffer.stop()
+	
+	if jumping:
+		if accelJumping:
+			pass
+			if jumpMomentum < jumpPower:
+				jumpMomentum = jumpMomentum + (jumpPower - jumpMomentum) * 0.1
+		elif deaccelJumping:
+			pass
+		else:
+			pass
+		if jumpMomentum < 0:
+			jumpMomentum = 0
+		
+		if floor(jumpMomentum) + 2 > jumpPower:
+			pass
+			accelJumping = false
+			jumpMomentum = 0
+	print(jumpMomentum)
+	
+	
 func jump():
-	jumpMomentum -= jumpPower
+	accelJumping = true
+	jumpMomentum += 100
 	sliding = false
 	slideParticles.emitting = false
 func shortJump():
-	velocity.y -= 250
+	jumpMomentum -= (jumpPower - 150)
 	sliding = false
 	slideParticles.emitting = false
 
@@ -207,7 +242,7 @@ func handleDashes():
 		var dashDirection = Input.get_vector("a", "d", "w", "s")
 		
 		if dashDirection != Vector2(0,0):
-			
+			jumpMomentum = 0
 			availableDashes -= 1
 			
 			coyoteTimer.stop()
@@ -216,7 +251,8 @@ func handleDashes():
 			dashing = true
 			$Sprite2D.modulate = Color(0.0, 1.0, 1.0, 1.0)
 			
-			await get_tree().create_timer(0.1).timeout
+			playerGravity = Vector2(0,0)
+			await get_tree().create_timer(0.15).timeout
 			
 			dashing = false
 			
@@ -224,7 +260,7 @@ func handleDashes():
 				#midairMomentum += (Vector2(500, 200) * dashDirection)
 				pass
 			
-			playerGravity = Vector2(0,0)
+			
 			
 			velocity = Vector2(0,0)
 			$Sprite2D.modulate = Color(1.0, 1.0, 1.0, 1.0)
