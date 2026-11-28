@@ -15,7 +15,7 @@ extends CharacterBody2D
 
 const accel = 60
 const speed = 300
-const jumpPower = 400
+const jumpPower = 750
 const dashSpeed = 1250 + speed
 
 var momentum = Vector2(0,0)
@@ -149,26 +149,23 @@ func handleJumps():
 	
 	if jumping:
 		if accelJumping:
-			pass
-			if jumpMomentum < jumpPower:
-				jumpMomentum = jumpMomentum + (jumpPower - jumpMomentum) * 0.1
+			if jumpMomentum > 100:
+				jumpMomentum = jumpMomentum + (100 - jumpMomentum) * 0.2
 		elif deaccelJumping:
 			pass
+			
 		else:
 			pass
 		if jumpMomentum < 0:
 			jumpMomentum = 0
 		
-		if floor(jumpMomentum) + 2 > jumpPower:
-			pass
+		if floor(jumpMomentum) - 2 < 100:
 			accelJumping = false
 			jumpMomentum = 0
-	print(jumpMomentum)
-	
 	
 func jump():
 	accelJumping = true
-	jumpMomentum += 100
+	jumpMomentum += jumpPower
 	sliding = false
 	slideParticles.emitting = false
 func shortJump():
@@ -199,8 +196,6 @@ func handleSlides():
 	
 	if (Input.is_action_pressed('a') || Input.is_action_pressed('d')) && directionX == 0 && sliding:
 		shortJump()
-	
-	#print(directionX)
 	
 	if sliding && directionX != 0:
 		if (directionX == -1 && abs(velocity.x) == velocity.x):
@@ -260,10 +255,24 @@ func handleDashes():
 				#midairMomentum += (Vector2(500, 200) * dashDirection)
 				pass
 			
-			
+			dashMomentum = dashDirection * 200
 			
 			velocity = Vector2(0,0)
 			$Sprite2D.modulate = Color(1.0, 1.0, 1.0, 1.0)
+	
+	if (dashMomentum[0] < 10 && dashMomentum[0] > -10) && (dashMomentum[1] < 10 && dashMomentum[1] > -10):
+		dashMomentum = Vector2(0,0)
+	else:
+		if dashMomentum[0] > 0:
+			dashMomentum[0] -= 5
+		else:
+			dashMomentum[0] += 5
+		if dashMomentum[1] > 0:
+			dashMomentum[1] -= 5
+		else:
+			dashMomentum[1] += 5
+	if is_on_floor():
+		dashMomentum = Vector2(0,0)
 
 
 
