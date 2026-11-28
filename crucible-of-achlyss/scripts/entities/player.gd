@@ -9,6 +9,7 @@ extends CharacterBody2D
 
 @onready var coyoteTimer = get_node('coyoteFrames')
 @onready var inputBuffer = get_node('inputBuffer')
+@onready var slideDashBuffer = get_node('dashToSlideBuffer')
 
 @onready var slideParticles = get_node('slideParticles')
 @onready var clingingParticles = get_node('clingingParticles')
@@ -34,6 +35,7 @@ var playerGravity = Vector2(0,0)
 const slideThresh = 500
 var slideSpeed = 0
 var sliding = false
+var slideDashDirection = 0
 
 var dashing = false
 var availableDashes = 1
@@ -88,31 +90,8 @@ func _process(delta: float) -> void:
 
 #I'll have to rework this system like every five seconds bruh
 func handleMomentum():
-	#if !dashing:
-		#var directionX = Input.get_axis('a', 'd')
-		#leftRightWeight = directionX * speed
-	#
-	#if !is_on_floor():
-		#if !(midairMomentum[0] < 10 && midairMomentum[0] > -10):
-			#if midairMomentum[0] > 0:
-				#midairMomentum[0] -= 10
-			#else:
-				#midairMomentum[0] += 10
-	#else:
-		#midairMomentum = Vector2(0,0)
-	#
-	#if !dashing && !sliding && is_on_floor():
-		#velocity.x = leftRightWeight
-	#elif !dashing && !sliding:
-		#
-		#if abs(midairMomentum[0]) < abs(leftRightWeight):
-			#velocity.x =leftRightWeight
-		#else:
-			#velocity.x = midairMomentum[0]
 	
-	#we must program acceleration and decelaration
-	
-	if !dashing:
+	if !dashing && !sliding:
 		var directionX = Input.get_axis('a','d')
 		if abs(directionX) == directionX && directionX != 0:
 			if leftRightPlayer < speed:
@@ -133,6 +112,8 @@ func handleMomentum():
 		velocity.x = leftRightPlayer + dashMomentum[0]
 		velocity.y = dashMomentum[1] - jumpMomentum
 		velocity += playerGravity
+	elif sliding && !dashing:
+		velocity.x = slideSpeed
 
 
 
@@ -162,7 +143,8 @@ func handleJumps():
 		if floor(jumpMomentum) - 2 < 100:
 			accelJumping = false
 			jumpMomentum = 0
-	
+		if is_on_ceiling():
+			jumpMomentum = 0
 func jump():
 	accelJumping = true
 	jumpMomentum += jumpPower
@@ -179,6 +161,13 @@ func handleSlides():
 	if Input.is_action_pressed("s") && !sliding && is_on_floor() && abs(velocity.x) > (speed) && !dashing:
 		sliding = true
 		slideSpeed = velocity.x * 1.15
+		slideParticles.emitting = true
+	elif !slideDashBuffer.is_stopped() && !sliding && is_on_floor() && !dashing:
+		if slideDashDirection == 0 || slideDashDirection == 1:
+			slideSpeed = 450 * 1.15
+		else:
+			slideSpeed = -(450 * 1.15)
+		sliding = true
 		slideParticles.emitting = true
 	if not (Input.is_action_pressed("s")) && sliding:
 		sliding = false
@@ -248,29 +237,28 @@ func handleDashes():
 			
 			playerGravity = Vector2(0,0)
 			await get_tree().create_timer(0.15).timeout
-			
 			dashing = false
-			
-			if !sliding:
-				#midairMomentum += (Vector2(500, 200) * dashDirection)
-				pass
 			
 			dashMomentum = dashDirection * 200
 			
 			velocity = Vector2(0,0)
 			$Sprite2D.modulate = Color(1.0, 1.0, 1.0, 1.0)
+			
+			if dashDirection != Vector2(0, 1):
+				slideDashDirection = floor(dashDirection[0])
+				slideDashBuffer.start()
 	
 	if (dashMomentum[0] < 10 && dashMomentum[0] > -10) && (dashMomentum[1] < 10 && dashMomentum[1] > -10):
 		dashMomentum = Vector2(0,0)
 	else:
 		if dashMomentum[0] > 0:
-			dashMomentum[0] -= 5
+			dashMomentum[0] -= 4
 		else:
-			dashMomentum[0] += 5
+			dashMomentum[0] += 4
 		if dashMomentum[1] > 0:
-			dashMomentum[1] -= 5
+			dashMomentum[1] -= 4
 		else:
-			dashMomentum[1] += 5
+			dashMomentum[1] += 4
 	if is_on_floor():
 		dashMomentum = Vector2(0,0)
 

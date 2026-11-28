@@ -79,3 +79,7 @@ scale_amount_min = 2.0
 scale_amount_max = 5.0
 scale_amount_curve = SubResource("Curve_42nxq")
 color = Color(1, 0.78431374, 0, 1)
+
+[node name="dashToSlideBuffer" type="Timer" parent="." unique_id=29652960]
+wait_time = 0.1
+one_shot = true
